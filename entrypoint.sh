@@ -17,25 +17,30 @@ hit_lines=0
 
 # Process each line containing "LF:" (Lines Found) and "LH:" (Lines Hit)
 while IFS= read -r line; do
-    if [[ $line == LF:* ]]; then
-        # Extract and sum total lines
-        total_lines=$((total_lines + ${line#*:}))
-    elif [[ $line == LH:* ]]; then
-        # Extract and sum hit lines
-        hit_lines=$((hit_lines + ${line#*:}))
-    fi
+    case "$line" in
+        LF:*) 
+            # Extract and sum total lines
+            total_lines=$((total_lines + ${line#*:}))
+            ;;
+        LH:*) 
+            # Extract and sum hit lines
+            hit_lines=$((hit_lines + ${line#*:}))
+            ;;
+    esac
 done < "$COVERAGE_FILE"
 
-# Calculate coverage percentage
-if [ "$total_lines" -gt 0 ]; then
-    coverage=$(echo "scale=2; $hit_lines * 100 / $total_lines" | bc)
-    if [ $(echo "$coverage < $MINIMUM_COVERAGE" | bc) -eq 1 ]; then
-        echo "Coverage is below the minimum threshold of $MINIMUM_COVERAGE%"
-        exit 1
-    fi
-    echo "Total Line Coverage: $coverage%"
+# Compute coverage percentage
+coverage_percentage=$(awk "BEGIN {printf \"%f\", ($hit_lines/$total_lines)*100}")
+
+echo "Total Lines: $total_lines"
+echo "Hit Lines: $hit_lines"
+echo "Coverage: $coverage_percentage%"
+
+# Check if coverage meets the minimum requirement
+if [ "$(echo "$coverage_percentage >= $MINIMUM_COVERAGE" | bc)" -eq 1 ]; then
+    echo "Code coverage requirement met."
     exit 0
 else
-    echo "No coverage data found."
+    echo "Code coverage below minimum. Required: $MINIMUM_COVERAGE%, Found: $coverage_percentage%"
     exit 1
 fi
