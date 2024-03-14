@@ -2,6 +2,9 @@
 COVERAGE_FILE=$1
 MINIMUM_COVERAGE=$2
 
+echo "Coverage file: $COVERAGE_FILE"
+echo "Minimum coverage: $MINIMUM_COVERAGE"
+
 # Ensure the file exists
 if [ ! -f "$COVERAGE_FILE" ]; then
     echo "The file $COVERAGE_FILE does not exist."

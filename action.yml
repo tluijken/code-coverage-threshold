@@ -8,9 +8,11 @@ inputs:
     description: 'The minimum code coverage threshold in order for this action to pass.'
     required: true
 runs:
-  run: |
-    chmod +x ./entrypoint.sh
-    ./entrypoint.sh ${{ inputs.coverage-file }} ${{ inputs.minimum-coverage }}
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.coverage-file }}
+    - ${{ inputs.minimum-coverage }}
 branding:
   icon: 'box'
   color: 'blue'
