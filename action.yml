@@ -1,0 +1,18 @@
+name: 'Code coverage threshold'
+description: 'Guard code coverage threshold based on the given LCOV file.'
+inputs:
+  coverage-file:
+    description: 'LCOV file path to run the test on'
+    required: true
+  minimum-coverage:
+    description: 'The minimum code coverage threshold in order for this action to pass.'
+    required: true
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.coverage-file }}
+    - ${{ inputs.minimum-coverage }}
+branding:
+  icon: 'box'
+  color: 'blue'
